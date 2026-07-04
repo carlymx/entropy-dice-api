@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EntropyDice — Documentation</title>
+<style>
+    :root {
+        --sidebar-bg: #1a1a2e;
+        --sidebar-fg: #c0c0c0;
+        --sidebar-active: #e94560;
+        --sidebar-hover: #533483;
+        --content-bg: #0f1923;
+        --content-fg: #c8d6e5;
+        --content-width: 800px;
+        --code-bg: #1a2a3a;
+        --code-border: #2a3a4a;
+        --heading-color: #e94560;
+        --link-color: #7ec8e3;
+        --border-color: #2a3a4a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        display: flex;
+        min-height: 100vh;
+        color: var(--content-fg);
+        line-height: 1.7;
+        background: #0f1923;
+    }
+    .sidebar {
+        width: 300px;
+        min-width: 300px;
+        background: var(--sidebar-bg);
+        color: var(--sidebar-fg);
+        padding: 24px 0;
+        position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    }
+    .sidebar-header {
+        padding: 0 24px 20px;
+        border-bottom: 1px solid #333;
+        margin-bottom: 12px;
+    }
+    .sidebar-header h1 {
+        font-size: 1.3em;
+        color: #e94560;
+    }
+    .sidebar-header .sub {
+        font-size: 0.8em;
+        color: #888;
+        margin-top: 4px;
+    }
+    .sidebar-header .version {
+        font-size: 0.7em;
+        color: #555;
+    }
+    .lang-switch {
+        margin-top: 10px;
+    }
+    .lang-switch a {
+        color: #7ec8e3;
+        text-decoration: none;
+        font-size: 0.85em;
+    }
+    .lang-switch a:hover { text-decoration: underline; }
+    .sidebar nav a {
+        display: block;
+        padding: 8px 24px;
+        color: var(--sidebar-fg);
+        text-decoration: none;
+        font-size: 0.9em;
+        transition: background 0.2s, color 0.2s;
+        border-left: 3px solid transparent;
+    }
+    .sidebar nav a:hover {
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+    }
+    .sidebar nav a.active {
+        color: #e94560;
+        border-left-color: #e94560;
+        background: rgba(233,69,96,0.1);
+    }
+    .sidebar nav .section-title {
+        padding: 16px 24px 4px;
+        font-size: 0.7em;
+        text-transform: uppercase;
+        color: #666;
+        letter-spacing: 1px;
+    }
+    .content {
+        flex: 1;
+        background: var(--content-bg);
+        padding: 40px 48px 80px;
+        max-width: var(--content-width);
+    }
+    .content h1 {
+        color: var(--heading-color);
+        font-size: 2em;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .content h2 {
+        color: var(--heading-color);
+        font-size: 1.5em;
+        margin-top: 36px;
+        margin-bottom: 12px;
+    }
+    .content h3 {
+        color: var(--heading-color);
+        font-size: 1.15em;
+        margin-top: 24px;
+        margin-bottom: 8px;
+    }
+    .content p { margin-bottom: 12px; }
+    .content ul, .content ol { margin-bottom: 12px; padding-left: 24px; }
+    .content li { margin-bottom: 4px; }
+    .content a { color: var(--link-color); }
+    .content a:hover { text-decoration: underline; }
+    .content code {
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 0.9em;
+        font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace;
+    }
+    .content pre {
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        border-radius: 6px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        overflow-x: auto;
+        font-size: 0.85em;
+        line-height: 1.5;
+    }
+    .content pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 1em;
+    }
+    .content blockquote {
+        margin: 16px 0;
+        padding: 12px 20px;
+        background: #1a2a3a;
+        border-left: 4px solid #e94560;
+        border-radius: 0 6px 6px 0;
+    }
+    .content blockquote strong { color: #e94560; }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 16px;
+    }
+    th, td {
+        border: 1px solid var(--border-color);
+        padding: 8px 12px;
+        text-align: left;
+        font-size: 0.9em;
+    }
+    th {
+        background: #1a2a3a;
+        font-weight: 600;
+    }
+    .badge {
+        display: inline-block;
+        background: #533483;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75em;
+        font-weight: bold;
+    }
+    .badge-green { background: #27ae60; }
+    .badge-red { background: #e74c3c; }
+    .badge-blue { background: #2980b9; }
+    .endpoint {
+        background: #1a2a3a;
+        border: 1px solid #2a3a4a;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+    }
+    .endpoint .method {
+        display: inline-block;
+        background: #27ae60;
+        color: #fff;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 0.8em;
+    }
+    .endpoint .path {
+        font-family: 'SF Mono', monospace;
+        font-size: 1.1em;
+        margin-left: 8px;
+    }
+    .lang-note {
+        background: #1a2a3a;
+        border-left: 4px solid #f39c12;
+        padding: 8px 16px;
+        margin-bottom: 16px;
+        font-size: 0.9em;
+        border-radius: 0 6px 6px 0;
+        color: #e0d5b8;
+    }
+    .example-response {
+        background: #1a1a2e;
+        color: #e0e0e0;
+        border-radius: 6px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        font-family: 'SF Mono', monospace;
+        font-size: 0.85em;
+        overflow-x: auto;
+    }
+    .example-response .highlight { color: #f5c542; }
+    @media (max-width: 768px) {
+        body { flex-direction: column; }
+        .sidebar {
+            width: 100%; min-width: 0;
+            position: static; height: auto;
+            padding: 16px 0;
+        }
+        .sidebar nav a { padding: 6px 16px; }
+        .sidebar-header { padding: 0 16px 12px; }
+        .content { padding: 24px 16px 60px; }
+    }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h1>EntropyDice</h1>
+        <div class="sub">True Random Dice API</div>
+        <div class="version">v0.8.5</div>
+        <div class="lang-switch">
+            <a href="es.html">🇪🇸 Español</a>
+        </div>
+    </div>
+    <nav>
+        <div class="section-title">Getting Started</div>
+        <a href="#introduction">Introduction</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#api-endpoints">API Endpoints</a>
+
+        <div class="section-title">Usage</div>
+        <a href="#dice-expressions">Dice Expressions</a>
+        <a href="#parameters">Parameters</a>
+        <a href="#response-formats">Response Formats</a>
+        <a href="#sources">Randomness Sources</a>
+
+        <div class="section-title">Integration</div>
+        <a href="#use-cases">Use Cases</a>
+        <a href="#from-browser">From Browser</a>
+        <a href="#from-curl">From curl</a>
+        <a href="#from-python">From Python</a>
+        <a href="#from-android">From Android</a>
+        <a href="#from-telegram">From Telegram Bot</a>
+        <a href="#from-discord">From Discord Bot</a>
+
+        <div class="section-title">Reference</div>
+        <a href="#error-handling">Error Handling</a>
+        <a href="#rate-limits">Rate Limits</a>
+        <a href="#env-vars">Environment Variables</a>
+        <a href="#deployment">Deployment</a>
+        <a href="#planned-features">Planned Features</a>
+        <a href="#about">About</a>
+    </nav>
+</aside>
+
+<main class="content" id="introduction">
+    <h1>EntropyDice Documentation</h1>
+    <p style="text-align:center;margin-bottom:24px;">
+        <img src="../../assets/captures/web001.png" alt="EntropyDice screenshot" style="max-width:100%;border-radius:8px;border:1px solid #2a3a4a;">
+    </p>
+    <p>
+        <strong>EntropyDice</strong> is a REST API that generates cryptographically
+        secure random numbers for role-playing game dice. It uses the kernel's CSPRNG
+        (<code>/dev/urandom</code>) to provide true hardware entropy, ensuring fair
+        and unbiased results.
+    </p>
+    <p>
+        Supports all standard RPG dice: D4, D6, D8, D10, D12, D20, D100 (percentile),
+        as well as compound expressions like <code>4D6+D12</code> and modifiers like
+        <code>2D8+1D20-4</code>.
+    </p>
+
+    <h2 id="quickstart">Quick Start</h2>
+    <p>Install and run the server locally:</p>
+    <pre><code>git clone &lt;repo&gt;
+cd EntropyDice
+npm install
+npm start</code></pre>
+    <p>Make your first roll:</p>
+    <pre><code><span class="highlight">curl "http://localhost:3000/roll?q=D20"</span>
+{"ok":true,"expression":"D20","groups":[{"dice":"D20","count":1,"rolls":[15],"subtotal":15}],"modifier":0,"detail":"[15]","total":15, ...}</code></pre>
+
+    <h2 id="api-endpoints">API Endpoints</h2>
+
+    <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="path">/</span>
+        <p style="margin-top:8px;margin-bottom:0">API information and health check. Returns version, available sources, and endpoint documentation.</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="path">/roll?q=&lt;expression&gt;&amp;source=&lt;source&gt;&amp;format=&lt;format&gt;</span>
+        <p style="margin-top:8px;margin-bottom:0">Roll dice. This is the main endpoint. All parameters except <code>q</code> are optional.</p>
+    </div>
+
+    <h2 id="dice-expressions">Dice Expressions</h2>
+    <p>The <code>q</code> parameter accepts expressions following this grammar:</p>
+    <pre><code>expr  → term (('+' | '-') term)*
+term  → factor (('*' | '/') factor)*
+factor → dice | number | '(' expr ')'
+dice  → ('D' | 'd') number    (equivalent to 1Dn)
+       | number ('D' | 'd') number
+number → \d+</code></pre>
+    <p>Operators follow standard mathematical precedence: <code>*</code> and <code>/</code> bind tighter than <code>+</code> and <code>-</code>. Parentheses can be used to override precedence.</p>
+
+    <h3>Basic Examples</h3>
+    <table>
+        <tr><th>Expression</th><th>Meaning</th><th>Example Response (text)</th></tr>
+        <tr><td><code>D6</code></td><td>1 six-sided die</td><td><code>[4] = 4</code></td></tr>
+        <tr><td><code>D20</code></td><td>1 twenty-sided die</td><td><code>[17] = 17</code></td></tr>
+        <tr><td><code>D100</code></td><td>1 percentile die</td><td><code>[73] = 73</code></td></tr>
+        <tr><td><code>4D6</code></td><td>4 six-sided dice</td><td><code>[4+2+6+1] = 13</code></td></tr>
+        <tr><td><code>3D8</code></td><td>3 eight-sided dice</td><td><code>[5+3+7] = 15</code></td></tr>
+    </table>
+
+    <h3>Compound Expressions</h3>
+    <table>
+        <tr><th>Expression</th><th>Meaning</th><th>Example Response (text)</th></tr>
+        <tr><td><code>4D6+D12</code></td><td>4d6 + 1d12</td><td><code>[4+2+6+1]+[9] = 22</code></td></tr>
+        <tr><td><code>2D8+1D20</code></td><td>2d8 + 1d20</td><td><code>[5+3]+[17] = 25</code></td></tr>
+        <tr><td><code>D4+2D10</code></td><td>1d4 + 2d10</td><td><code>[3]+[7+2] = 12</code></td></tr>
+    </table>
+
+    <h3>With Modifiers</h3>
+    <table>
+        <tr><th>Expression</th><th>Meaning</th><th>Example Response (text)</th></tr>
+        <tr><td><code>2D8+1D20-4</code></td><td>2d8 + 1d20 - 4</td><td><code>[8+8]+[20]-4 = 32</code></td></tr>
+        <tr><td><code>D6+3</code></td><td>1d6 + 3</td><td><code>[4]+3 = 7</code></td></tr>
+        <tr><td><code>3D6-2</code></td><td>3d6 - 2</td><td><code>[4+2+6]-2 = 10</code></td></tr>
+        <tr><td><code>D6-D4</code></td><td>1d6 - 1d4</td><td><code>[5]-[2] = 3</code></td></tr>
+    </table>
+
+    <h3>Complex Expressions</h3>
+    <p>Multiplication (<code>*</code>), division (<code>/</code>), and parentheses are supported:</p>
+    <table>
+        <tr><th>Expression</th><th>Meaning</th><th>Example Response (text)</th></tr>
+        <tr><td><code>D6*2</code></td><td>1d6 &times; 2</td><td><code>[4]*2 = 8</code></td></tr>
+        <tr><td><code>D6*D4</code></td><td>1d6 &times; 1d4</td><td><code>[5]*[3] = 15</code></td></tr>
+        <tr><td><code>D20/2</code></td><td>1d20 &divide; 2</td><td><code>[17]/2 = 8.5</code></td></tr>
+        <tr><td><code>(2D6+3)*2</code></td><td>(2d6 + 3) &times; 2</td><td><code>([4+2]+3)*2 = 18</code></td></tr>
+        <tr><td><code>2*(D4+D6)</code></td><td>2 &times; (1d4 + 1d6)</td><td><code>2*([3]+[4]) = 14</code></td></tr>
+        <tr><td><code>(D10+3)/2</code></td><td>(1d10 + 3) &divide; 2</td><td><code>([7]+3)/2 = 5</code></td></tr>
+    </table>
+    <p>Division returns floating-point results with up to 2 decimal places. Division by zero returns a <code>400</code> error.</p>
+
+    <div class="lang-note">
+        <strong>URL encoding:</strong> Special characters must be URL-encoded in query parameters:
+        <ul>
+            <li><code>+</code> → <code>%2B</code></li>
+            <li><code>*</code> → <code>%2A</code></li>
+            <li><code>/</code> → <code>%2F</code></li>
+        </ul>
+        Example: <code>4D6%2BD12</code>, <code>%282D6%2B3%29*2</code>
+    </div>
+
+    <h2 id="parameters">Parameters</h2>
+    <table>
+        <tr><th>Parameter</th><th>Required</th><th>Default</th><th>Values</th><th>Description</th></tr>
+        <tr>
+            <td><code>q</code></td>
+            <td><span class="badge badge-red">Yes</span></td>
+            <td>—</td>
+            <td>Dice expression</td>
+            <td>The dice expression to roll (e.g., <code>D6</code>, <code>4D6+D12</code>)</td>
+        </tr>
+        <tr>
+            <td><code>source</code></td>
+            <td><span class="badge badge-green">No</span></td>
+            <td><code>crypto-pure</code></td>
+            <td><code>crypto-pure</code>, <code>crypto-xoshiro-ng</code></td>
+            <td>Randomness source</td>
+        </tr>
+        <tr>
+            <td><code>format</code></td>
+            <td><span class="badge badge-green">No</span></td>
+            <td><code>json</code></td>
+            <td><code>json</code>, <code>text</code>, <code>html</code>, <code>raw</code></td>
+            <td>Response format</td>
+        </tr>
+    </table>
+
+    <h2 id="response-formats">Response Formats</h2>
+
+    <h3>JSON (default)</h3>
+    <p>Structured response with full roll details. Use for programmatic access.</p>
+    <pre><code>GET /roll?q=2D8+1D20-4
+
+{
+  "ok": true,
+  "expression": "2D8+1D20-4",
+  "normalized": "2D8+1D20-4",
+  "source": "crypto-pure",
+  "groups": [
+    { "dice": "D8", "count": 2, "rolls": [8, 8], "subtotal": 16 },
+    { "dice": "D20", "count": 1, "rolls": [20], "subtotal": 20 }
+  ],
+  "modifier": -4,
+  "detail": "[8+8]+[20]-4",
+  "total": 32,
+  "timestamp": "2026-07-04T12:00:00.000Z"
+}</code></pre>
+
+    <h3>Text</h3>
+    <p>Human-readable plain text. Use from terminal / curl.</p>
+    <pre><code>GET /roll?q=2D8+1D20-4&format=text
+<span class="highlight">[8+8]+[20]-4 = 32</span></code></pre>
+
+    <h3>HTML</h3>
+    <p>Styled HTML page. Use in browser directly or embed in iframes.</p>
+    <pre><code>GET /roll?q=2D8+1D20-4&format=html
+<span class="highlight">&lt;!-- Returns a full styled HTML page with dark theme --&gt;</span></code></pre>
+    <p>Opening the URL directly in a browser will show a nicely formatted result card with the expression, individual rolls, and total.</p>
+
+    <h3>Raw</h3>
+    <p>Just the number. Perfect for scripts that only need the result value.</p>
+    <pre><code>GET /roll?q=2D8+1D20-4&format=raw
+<span class="highlight">32</span></code></pre>
+
+    <h2 id="sources">Randomness Sources</h2>
+
+    <h3>crypto-pure (default)</h3>
+    <p>
+        Uses <code>crypto.randomInt()</code> from Node.js, which calls the kernel's
+        CSPRNG (<code>getrandom()</code> syscall → <code>/dev/urandom</code>).
+        This provides <strong>true hardware entropy</strong> collected from:
+    </p>
+    <ul>
+        <li>CPU cycle jitter</li>
+        <li>Disk I/O timing variations</li>
+        <li>Network interrupt timing</li>
+        <li>Hardware random number generators (if available)</li>
+    </ul>
+    <p>
+        Each call is <strong>stateless</strong> and <strong>independent</strong>.
+        No seed, no state, no sequence — every number is fresh entropy.
+        Uses rejection sampling internally to eliminate modulo bias.
+    </p>
+
+    <h3>crypto-xoshiro-ng</h3>
+    <p>
+        Hybrid source that combines the speed of PRNG with the security of
+        cryptographic entropy:
+    </p>
+    <ol>
+        <li><strong>Seed:</strong> 128 bits of true entropy via <code>crypto.randomBytes(16)</code></li>
+        <li><strong>Generation:</strong> Xoshiro128++ algorithm (~200M numbers/sec)</li>
+        <li><strong>Noise injection:</strong> Each output is XOR'd with a microsecond-granularity timestamp</li>
+        <li><strong>Auto-reseed:</strong> New 128-bit seed every hour (configurable)</li>
+    </ol>
+    <p>
+        Ideal for high-throughput scenarios where you need both speed and
+        non-deterministic behavior.
+    </p>
+
+    <h2 id="use-cases">Use Cases</h2>
+    <p>
+        Being a standard REST API, EntropyDice can be called from any language
+        or platform that supports HTTP requests. Below are common integration
+        examples.
+    </p>
+
+    <h3 id="from-browser">From Browser (JavaScript)</h3>
+    <pre><code>const response = await fetch('https://entropydice.onrender.com/roll?q=4D6+D12');
+const data = await response.json();
+console.log(`Total: ${data.total}`);   // → Total: 22
+console.log(`Detail: ${data.detail}`); // → Detail: [4+2+6+1]+[9]</code></pre>
+
+    <h3 id="from-curl">From curl (terminal)</h3>
+    <pre><code># JSON response
+curl "https://entropydice.onrender.com/roll?q=4D6%2BD12"
+
+# Text response (human readable)
+curl "https://entropydice.onrender.com/roll?q=4D6%2BD12&format=text"
+# → [4+2+6+1]+[9] = 22
+
+# Raw response (just the number)
+curl "https://entropydice.onrender.com/roll?q=4D6&format=raw"
+# → 13
+
+# Use in a shell script:
+RESULT=$(curl -s "https://entropydice.onrender.com/roll?q=D20&format=raw")
+echo "You rolled: $RESULT"</code></pre>
+
+    <h3 id="from-python">From Python</h3>
+    <pre><code>import requests
+
+# Roll 4d6 + d12
+r = requests.get("https://entropydice.onrender.com/roll", params={
+    "q": "4D6+D12"
+})
+data = r.json()
+print(f"Detail: {data['detail']}")
+print(f"Total:  {data['total']}")
+
+# Roll with modifier and custom source
+r = requests.get("https://entropydice.onrender.com/roll", params={
+    "q": "2D8+1D20-4",
+    "source": "crypto-xoshiro-ng",
+    "format": "raw"
+})
+print(f"Result: {r.text}")  # → 32</code></pre>
+
+    <h3 id="from-android">From Android (Kotlin)</h3>
+    <pre><code>// Using OkHttp
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+
+val client = OkHttpClient()
+
+val request = Request.Builder()
+    .url("https://entropydice.onrender.com/roll?q=4D6")
+    .build()
+
+client.newCall(request).execute().use { response ->
+    val json = JSONObject(response.body!!.string())
+    val total = json.getInt("total")
+    val detail = json.getString("detail")
+    textView.text = "🎲 $detail = $total"
+}
+
+// Using Retrofit
+interface DiceApi {
+    @GET("roll")
+    suspend fun rollDice(
+        @Query("q") expression: String,
+        @Query("format") format: String = "json"
+    ): ResponseBody
+}</code></pre>
+
+    <h3 id="from-telegram">From Telegram Bot (Python)</h3>
+    <pre><code>import requests
+from telegram import Update
+from telegram.ext import Application, CommandHandler
+
+API_URL = "https://entropydice.onrender.com/roll"
+
+async def roll_command(update: Update, context):
+    expression = context.args[0] if context.args else "D20"
+
+    r = requests.get(API_URL, params={
+        "q": expression,
+        "format": "text"
+    })
+
+    await update.message.reply_text(
+        f"🎲 *{expression}*\n`{r.text}`",
+        parse_mode="Markdown"
+    )
+
+app = Application.builder().token("YOUR_TOKEN").build()
+app.add_handler(CommandHandler("roll", roll_command))
+app.run_polling()</code></pre>
+
+    <h3 id="from-discord">From Discord Bot (discord.js)</h3>
+    <pre><code>const { Client, GatewayIntentBits } = require('discord.js');
+
+client.on('messageCreate', async msg => {
+    if (!msg.content.startsWith('!roll')) return;
+
+    const args = msg.content.slice(6).trim();
+    const expr = args || 'D20';
+
+    const res = await fetch(
+        `https://entropydice.onrender.com/roll?q=${encodeURIComponent(expr)}&format=json`
+    );
+    const data = await res.json();
+
+    const embed = {
+        title: '🎲 Dice Roll',
+        description: `${data.detail} = **${data.total}**`,
+        color: 0xe94560,
+        footer: { text: `source: ${data.source}` }
+    };
+    msg.channel.send({ embeds: [embed] });
+});</code></pre>
+
+    <h2 id="error-handling">Error Handling</h2>
+    <p>Errors return a JSON response with an <code>error</code> field and the appropriate HTTP status code.</p>
+
+    <table>
+        <tr><th>Status</th><th>Situation</th><th>Example</th></tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>Missing or invalid <code>q</code> parameter</td>
+            <td><code>{"ok":false,"error":"Falta el parámetro \"q\"..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>Invalid dice sides</td>
+            <td><code>{"ok":false,"error":"Caras no válidas: D7..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>Invalid expression syntax</td>
+            <td><code>{"ok":false,"error":"Carácter inesperado: 'X'"}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>Division by zero</td>
+            <td><code>{"ok":false,"error":"División por cero"}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>Invalid source name</td>
+            <td><code>{"ok":false,"error":"Fuente no válida: 'foo'..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">429</span></td>
+            <td>Rate limit exceeded (burst or daily)</td>
+            <td><code>{"ok":false,"error":"Demasiadas peticiones..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">403</span></td>
+            <td>IP permanently banned</td>
+            <td><code>{"ok":false,"error":"IP bloqueada permanentemente..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">500</span></td>
+            <td>Internal server error</td>
+            <td><code>{"ok":false,"error":"..."}</code></td>
+        </tr>
+    </table>
+
+    <h2 id="rate-limits">Rate Limits</h2>
+    <p>
+        The <code>/roll</code> endpoint is protected by a two-layer rate limiting
+        system to ensure fair usage and prevent abuse.
+    </p>
+    <h3>Burst Limit</h3>
+    <p>
+        No more than <strong>120 requests per minute</strong> per IP address.
+        Exceeding this returns a <code>429 Too Many Requests</code> response.
+        Standard <code>X-RateLimit-*</code> headers are included in every response.
+    </p>
+    <h3>Daily Limit</h3>
+    <p>
+        No more than <strong>7200 requests per day</strong> per IP address.
+        Each response includes <code>X-RateLimit-Daily-Limit</code> and
+        <code>X-RateLimit-Daily-Remaining</code> headers.
+    </p>
+    <h3>Ban System</h3>
+    <p>
+        Each time an IP exceeds the daily limit, it accumulates a
+        <strong>strike</strong>. After <strong>3 consecutive strikes</strong>,
+        the IP is <strong>permanently banned</strong> and receives
+        <code>403 Forbidden</code> on all future requests.
+    </p>
+    <p>
+        Strikes expire after 24 hours of good behaviour (no daily-limit
+        violations). The data is persisted to a JSON file and survives
+        server restarts.
+    </p>
+
+    <h2 id="env-vars">Environment Variables</h2>
+    <table>
+        <tr><th>Variable</th><th>Default</th><th>Description</th></tr>
+        <tr><td><code>PORT</code></td><td><code>3000</code></td><td>HTTP server port</td></tr>
+        <tr><td><code>DEFAULT_SOURCE</code></td><td><code>crypto-pure</code></td><td>Default randomness source when <code>source</code> param is omitted</td></tr>
+        <tr><td><code>RESEED_INTERVAL_MS</code></td><td><code>3600000</code></td><td>Reseed interval for <code>crypto-xoshiro-ng</code> in milliseconds (1 hour)</td></tr>
+        <tr><td><code>RATE_LIMIT_WINDOW_MS</code></td><td><code>60000</code></td><td>Burst limit time window in milliseconds (1 minute)</td></tr>
+        <tr><td><code>RATE_LIMIT_MAX</code></td><td><code>120</code></td><td>Maximum requests per IP within the burst window</td></tr>
+        <tr><td><code>RATE_LIMIT_DAILY</code></td><td><code>7200</code></td><td>Maximum requests per IP per day</td></tr>
+        <tr><td><code>BAN_MAX_STRIKES</code></td><td><code>3</code></td><td>Consecutive daily-limit violations before permanent ban</td></tr>
+        <tr><td><code>BANNED_IPS</code></td><td><code></code></td><td>Comma-separated list of manually banned IPs</td></tr>
+    </table>
+
+    <h2 id="deployment">Deployment on Render</h2>
+    <ol>
+        <li>Create a <strong>Web Service</strong> on <a href="https://render.com" target="_blank">render.com</a></li>
+        <li>Connect your GitHub/GitLab repository</li>
+        <li>Configure:
+            <ul>
+                <li><strong>Build Command:</strong> <code>npm install</code></li>
+                <li><strong>Start Command:</strong> <code>node server.js</code></li>
+                <li><strong>Plan:</strong> Free</li>
+            </ul>
+        </li>
+        <li>Add optional environment variables (see above)</li>
+        <li>Deploy. Your API will be available at <code>https://your-app.onrender.com</code></li>
+    </ol>
+    <p>The free tier sleeps after 15 minutes of inactivity. The first request after sleep takes ~5-10 seconds to cold start.</p>
+
+    <h2 id="planned-features">Planned Features</h2>
+    <p>Features under consideration for future versions:</p>
+    <ul>
+        <li><code>max(a, b)</code> and <code>min(a, b)</code> — highest/lowest of two expressions</li>
+        <li><code>d</code> (drop) operator — e.g. <code>4D6d1</code> to drop the lowest die</li>
+        <li><code>k</code> (keep) operator — e.g. <code>4D6k3</code> to keep the 3 highest dice</li>
+        <li>Advantage/disadvantage notation: <code>ADV(D20)</code>, <code>DIS(D20)</code></li>
+    </ul>
+
+    <h4><code>name</code> parameter</h4>
+    <p>
+        When managing a game session with multiple players or NPCs, a
+        <code>name</code> (or <code>user</code>) parameter would let you tag each
+        roll with a player or character identifier — e.g.,
+        <code>Player-1</code>, <code>Esqueleto-3</code>, <code>murciélago</code>.
+        The API would echo this field back in the response, making it trivial for
+        clients to assign each result to the right actor in the scene.
+    </p>
+
+    <h4>Colored dice / parallel groups</h4>
+    <p>
+        Some games roll dice of different colours that form <em>separate</em>
+        operation groups rather than a single combined expression. For example,
+        rolling 2 green dice and 3 white dice at the same time: each colour pool
+        is evaluated independently. This feature would need careful design to
+        express colour groups in the query string while keeping the syntax
+        intuitive.
+    </p>
+
+    <h4>Raw-dice mode (no calculation)</h4>
+    <p>
+        A response mode that returns only the individual die results without
+        performing any arithmetic. For instance, <code>3D6</code> would yield
+        <code>[6][6][6]</code> and <code>2D8+4</code> would yield
+        <code>[8][8][4]</code> (operators and modifiers are ignored). This is
+        useful for debugging, manual verification, or when the client wants to
+        apply its own math. If the expression contains no dice at all — e.g.
+        <code>2+4+6</code> — the values would be returned as literal results
+        <code>[2][4][6]</code>.
+
+    <h2 id="about">About</h2>
+
+    <h3>EntropyDice v0.8.5</h3>
+
+    <p>
+        EntropyDice is a REST API that generates cryptographically secure random numbers
+        for role-playing game dice using the kernel's CSPRNG. It is designed to be simple,
+        lightweight, and usable from any platform that supports HTTP requests.
+    </p>
+
+    <p>
+        This application has been developed by <strong>carlymx</strong>.
+    </p>
+
+    <p>
+        GitHub: <a href="https://github.com/carlymx" target="_blank">https://github.com/carlymx</a>
+    </p>
+
+    <p>
+        Project repository: <a href="https://github.com/carlymx/entropydice" target="_blank">https://github.com/carlymx/entropydice</a>
+    </p>
+
+    <h3>Intellectual Property</h3>
+
+    <p>
+        The source code of this application is distributed under the terms of the
+        <strong>GNU General Public License v3.0</strong>.
+    </p>
+
+    <p>
+        <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">https://www.gnu.org/licenses/gpl-3.0.html</a>
+    </p>
+
+    <h3>Legal Notice</h3>
+
+    <p>
+        THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+    </p>
+
+    <p>
+        EntropyDice is a non-profit project, created for educational and entertainment
+        purposes. No fees are charged for its use, and no personal data is collected
+        from users.
+    </p>
+
+    <br>
+    <hr>
+    <p style="color:#555;font-size:0.85em;text-align:center;margin-top:24px;">
+        EntropyDice v0.8.5 &mdash; 2026-07-04<br>
+        Made by <a href="https://github.com/carlymx" target="_blank" style="color:#7ec8e3;">carlymx</a>
+        &middot; <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color:#7ec8e3;">GPLv3</a>
+    </p>
+</main>
+
+<script>
+    document.querySelectorAll('.sidebar nav a').forEach(link => {
+        link.addEventListener('click', function() {
+            document.querySelectorAll('.sidebar nav a').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    if (location.hash) {
+        const active = document.querySelector(`.sidebar nav a[href="${location.hash}"]`);
+        if (active) active.classList.add('active');
+    }
+    window.addEventListener('hashchange', () => {
+        document.querySelectorAll('.sidebar nav a').forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar nav a[href="${location.hash}"]`);
+        if (active) active.classList.add('active');
+    });
+</script>
+</body>
+</html>

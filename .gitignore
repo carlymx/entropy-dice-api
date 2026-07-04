@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.log
+/tmp/
+/data/
+
+# Documentos internos no destinados a control de versiones
+PLAN.md
+RNG_REFERENCE.md

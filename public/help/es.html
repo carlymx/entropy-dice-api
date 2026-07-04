@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EntropyDice — Documentación</title>
+<style>
+    :root {
+        --sidebar-bg: #1a1a2e;
+        --sidebar-fg: #c0c0c0;
+        --sidebar-active: #e94560;
+        --sidebar-hover: #533483;
+        --content-bg: #0f1923;
+        --content-fg: #c8d6e5;
+        --content-width: 800px;
+        --code-bg: #1a2a3a;
+        --code-border: #2a3a4a;
+        --heading-color: #e94560;
+        --link-color: #7ec8e3;
+        --border-color: #2a3a4a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        display: flex;
+        min-height: 100vh;
+        color: var(--content-fg);
+        line-height: 1.7;
+        background: #0f1923;
+    }
+    .sidebar {
+        width: 300px;
+        min-width: 300px;
+        background: var(--sidebar-bg);
+        color: var(--sidebar-fg);
+        padding: 24px 0;
+        position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    }
+    .sidebar-header {
+        padding: 0 24px 20px;
+        border-bottom: 1px solid #333;
+        margin-bottom: 12px;
+    }
+    .sidebar-header h1 {
+        font-size: 1.3em;
+        color: #e94560;
+    }
+    .sidebar-header .sub {
+        font-size: 0.8em;
+        color: #888;
+        margin-top: 4px;
+    }
+    .sidebar-header .version {
+        font-size: 0.7em;
+        color: #555;
+    }
+    .lang-switch {
+        margin-top: 10px;
+    }
+    .lang-switch a {
+        color: #7ec8e3;
+        text-decoration: none;
+        font-size: 0.85em;
+    }
+    .lang-switch a:hover { text-decoration: underline; }
+    .sidebar nav a {
+        display: block;
+        padding: 8px 24px;
+        color: var(--sidebar-fg);
+        text-decoration: none;
+        font-size: 0.9em;
+        transition: background 0.2s, color 0.2s;
+        border-left: 3px solid transparent;
+    }
+    .sidebar nav a:hover {
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+    }
+    .sidebar nav a.active {
+        color: #e94560;
+        border-left-color: #e94560;
+        background: rgba(233,69,96,0.1);
+    }
+    .sidebar nav .section-title {
+        padding: 16px 24px 4px;
+        font-size: 0.7em;
+        text-transform: uppercase;
+        color: #666;
+        letter-spacing: 1px;
+    }
+    .content {
+        flex: 1;
+        background: var(--content-bg);
+        padding: 40px 48px 80px;
+        max-width: var(--content-width);
+    }
+    .content h1 {
+        color: var(--heading-color);
+        font-size: 2em;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .content h2 {
+        color: var(--heading-color);
+        font-size: 1.5em;
+        margin-top: 36px;
+        margin-bottom: 12px;
+    }
+    .content h3 {
+        color: var(--heading-color);
+        font-size: 1.15em;
+        margin-top: 24px;
+        margin-bottom: 8px;
+    }
+    .content p { margin-bottom: 12px; }
+    .content ul, .content ol { margin-bottom: 12px; padding-left: 24px; }
+    .content li { margin-bottom: 4px; }
+    .content a { color: var(--link-color); }
+    .content a:hover { text-decoration: underline; }
+    .content code {
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 0.9em;
+        font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace;
+    }
+    .content pre {
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        border-radius: 6px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        overflow-x: auto;
+        font-size: 0.85em;
+        line-height: 1.5;
+    }
+    .content pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 1em;
+    }
+    .content blockquote {
+        margin: 16px 0;
+        padding: 12px 20px;
+        background: #1a2a3a;
+        border-left: 4px solid #e94560;
+        border-radius: 0 6px 6px 0;
+    }
+    .content blockquote strong { color: #e94560; }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 16px;
+    }
+    th, td {
+        border: 1px solid var(--border-color);
+        padding: 8px 12px;
+        text-align: left;
+        font-size: 0.9em;
+    }
+    th {
+        background: #1a2a3a;
+        font-weight: 600;
+    }
+    .badge {
+        display: inline-block;
+        background: #533483;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75em;
+        font-weight: bold;
+    }
+    .badge-green { background: #27ae60; }
+    .badge-red { background: #e74c3c; }
+    .badge-blue { background: #2980b9; }
+    .endpoint {
+        background: #1a2a3a;
+        border: 1px solid #2a3a4a;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+    }
+    .endpoint .method {
+        display: inline-block;
+        background: #27ae60;
+        color: #fff;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 0.8em;
+    }
+    .endpoint .path {
+        font-family: 'SF Mono', monospace;
+        font-size: 1.1em;
+        margin-left: 8px;
+    }
+    .lang-note {
+        background: #1a2a3a;
+        border-left: 4px solid #f39c12;
+        padding: 8px 16px;
+        margin-bottom: 16px;
+        font-size: 0.9em;
+        border-radius: 0 6px 6px 0;
+        color: #e0d5b8;
+    }
+    .example-response {
+        background: #1a1a2e;
+        color: #e0e0e0;
+        border-radius: 6px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        font-family: 'SF Mono', monospace;
+        font-size: 0.85em;
+        overflow-x: auto;
+    }
+    .example-response .highlight { color: #f5c542; }
+    @media (max-width: 768px) {
+        body { flex-direction: column; }
+        .sidebar {
+            width: 100%; min-width: 0;
+            position: static; height: auto;
+            padding: 16px 0;
+        }
+        .sidebar nav a { padding: 6px 16px; }
+        .sidebar-header { padding: 0 16px 12px; }
+        .content { padding: 24px 16px 60px; }
+    }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h1>EntropyDice</h1>
+        <div class="sub">API de Dados Aleatorios Reales</div>
+        <div class="version">v0.8.5</div>
+        <div class="lang-switch">
+            <a href="en.html">🇬🇧 English</a>
+        </div>
+    </div>
+    <nav>
+        <div class="section-title">Primeros Pasos</div>
+        <a href="#introduccion">Introducción</a>
+        <a href="#inicio-rapido">Inicio Rápido</a>
+        <a href="#endpoints">Endpoints</a>
+
+        <div class="section-title">Uso</div>
+        <a href="#expresiones">Expresiones de Dados</a>
+        <a href="#parametros">Parámetros</a>
+        <a href="#formatos">Formatos de Respuesta</a>
+        <a href="#fuentes">Fuentes de Aleatoriedad</a>
+
+        <div class="section-title">Integración</div>
+        <a href="#casos-de-uso">Casos de Uso</a>
+        <a href="#desde-navegador">Desde el Navegador</a>
+        <a href="#desde-curl">Desde curl</a>
+        <a href="#desde-python">Desde Python</a>
+        <a href="#desde-android">Desde Android</a>
+        <a href="#desde-telegram">Desde Telegram</a>
+        <a href="#desde-discord">Desde Discord</a>
+
+        <div class="section-title">Referencia</div>
+        <a href="#errores">Manejo de Errores</a>
+        <a href="#limites">Límites de Peticiones</a>
+        <a href="#variables">Variables de Entorno</a>
+        <a href="#despliegue">Despliegue</a>
+        <a href="#futuras-funcionalidades">Futuras Funcionalidades</a>
+        <a href="#acerca-de">Acerca de</a>
+    </nav>
+</aside>
+
+<main class="content" id="introduccion">
+    <h1>Documentación de EntropyDice</h1>
+    <p style="text-align:center;margin-bottom:24px;">
+        <img src="../../assets/captures/web001.png" alt="Captura de EntropyDice" style="max-width:100%;border-radius:8px;border:1px solid #2a3a4a;">
+    </p>
+    <p>
+        <strong>EntropyDice</strong> es una API REST que genera números aleatorios
+        criptográficamente seguros para dados de juegos de rol. Usa el CSPRNG del
+        kernel de Linux (<code>/dev/urandom</code>) para proporcionar entropía real
+        de hardware, garantizando resultados justos y sin sesgo.
+    </p>
+    <p>
+        Soporta todos los dados estándar de rol: D4, D6, D8, D10, D12, D20, D100
+        (percentil), así como expresiones compuestas como <code>4D6+D12</code> y
+        modificadores como <code>2D8+1D20-4</code>.
+    </p>
+
+    <h2 id="inicio-rapido">Inicio Rápido</h2>
+    <p>Instala y ejecuta el servidor localmente:</p>
+    <pre><code>git clone &lt;repo&gt;
+cd EntropyDice
+npm install
+npm start</code></pre>
+    <p>Haz tu primera tirada:</p>
+    <pre><code><span class="highlight">curl "http://localhost:3000/roll?q=D20"</span>
+{"ok":true,"expression":"D20","groups":[{"dice":"D20","count":1,"rolls":[15],"subtotal":15}],"modifier":0,"detail":"[15]","total":15, ...}</code></pre>
+
+    <h2 id="endpoints">Endpoints</h2>
+
+    <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="path">/</span>
+        <p style="margin-top:8px;margin-bottom:0">Información de la API y health check. Devuelve versión, fuentes disponibles y documentación de endpoints.</p>
+    </div>
+
+    <div class="endpoint">
+        <span class="method">GET</span>
+        <span class="path">/roll?q=&lt;expresión&gt;&amp;source=&lt;fuente&gt;&amp;format=&lt;formato&gt;</span>
+        <p style="margin-top:8px;margin-bottom:0">Lanzar dados. Este es el endpoint principal. Todos los parámetros excepto <code>q</code> son opcionales.</p>
+    </div>
+
+    <h2 id="expresiones">Expresiones de Dados</h2>
+    <p>El parámetro <code>q</code> acepta expresiones según esta gramática:</p>
+    <pre><code>expr    → factor (('+' | '-') factor)*
+termino → factor (('*' | '/') factor)*
+factor  → dado | número | '(' expr ')'
+dado    → ('D' | 'd') número    (equivale a 1Dn)
+         | número ('D' | 'd') número
+número  → \d+</code></pre>
+    <p>Los operadores siguen la precedencia matemática estándar: <code>*</code> y <code>/</code> tienen mayor precedencia que <code>+</code> y <code>-</code>. Los paréntesis pueden usarse para alterar la precedencia.</p>
+
+    <h3>Ejemplos Básicos</h3>
+    <table>
+        <tr><th>Expresión</th><th>Significado</th><th>Ejemplo Respuesta (text)</th></tr>
+        <tr><td><code>D6</code></td><td>1 dado de 6 caras</td><td><code>[4] = 4</code></td></tr>
+        <tr><td><code>D20</code></td><td>1 dado de 20 caras</td><td><code>[17] = 17</code></td></tr>
+        <tr><td><code>D100</code></td><td>1 dado percentil</td><td><code>[73] = 73</code></td></tr>
+        <tr><td><code>4D6</code></td><td>4 dados de 6 caras</td><td><code>[4+2+6+1] = 13</code></td></tr>
+        <tr><td><code>3D8</code></td><td>3 dados de 8 caras</td><td><code>[5+3+7] = 15</code></td></tr>
+    </table>
+
+    <h3>Expresiones Compuestas</h3>
+    <table>
+        <tr><th>Expresión</th><th>Significado</th><th>Ejemplo Respuesta (text)</th></tr>
+        <tr><td><code>4D6+D12</code></td><td>4d6 + 1d12</td><td><code>[4+2+6+1]+[9] = 22</code></td></tr>
+        <tr><td><code>2D8+1D20</code></td><td>2d8 + 1d20</td><td><code>[5+3]+[17] = 25</code></td></tr>
+        <tr><td><code>D4+2D10</code></td><td>1d4 + 2d10</td><td><code>[3]+[7+2] = 12</code></td></tr>
+    </table>
+
+    <h3>Con Modificadores</h3>
+    <table>
+        <tr><th>Expresión</th><th>Significado</th><th>Ejemplo Respuesta (text)</th></tr>
+        <tr><td><code>2D8+1D20-4</code></td><td>2d8 + 1d20 - 4</td><td><code>[8+8]+[20]-4 = 32</code></td></tr>
+        <tr><td><code>D6+3</code></td><td>1d6 + 3</td><td><code>[4]+3 = 7</code></td></tr>
+        <tr><td><code>3D6-2</code></td><td>3d6 - 2</td><td><code>[4+2+6]-2 = 10</code></td></tr>
+        <tr><td><code>D6-D4</code></td><td>1d6 - 1d4</td><td><code>[5]-[2] = 3</code></td></tr>
+    </table>
+
+    <h3>Expresiones Complejas</h3>
+    <p>Se soporta multiplicación (<code>*</code>), división (<code>/</code>) y paréntesis:</p>
+    <table>
+        <tr><th>Expresión</th><th>Significado</th><th>Ejemplo Respuesta (text)</th></tr>
+        <tr><td><code>D6*2</code></td><td>1d6 &times; 2</td><td><code>[4]*2 = 8</code></td></tr>
+        <tr><td><code>D6*D4</code></td><td>1d6 &times; 1d4</td><td><code>[5]*[3] = 15</code></td></tr>
+        <tr><td><code>D20/2</code></td><td>1d20 &divide; 2</td><td><code>[17]/2 = 8.5</code></td></tr>
+        <tr><td><code>(2D6+3)*2</code></td><td>(2d6 + 3) &times; 2</td><td><code>([4+2]+3)*2 = 18</code></td></tr>
+        <tr><td><code>2*(D4+D6)</code></td><td>2 &times; (1d4 + 1d6)</td><td><code>2*([3]+[4]) = 14</code></td></tr>
+        <tr><td><code>(D10+3)/2</code></td><td>(1d10 + 3) &divide; 2</td><td><code>([7]+3)/2 = 5</code></td></tr>
+    </table>
+    <p>La división devuelve resultados con hasta 2 decimales. La división por cero devuelve un error <code>400</code>.</p>
+
+    <div class="lang-note">
+        <strong>Codificación URL:</strong> Los caracteres especiales deben codificarse en los parámetros de consulta:
+        <ul>
+            <li><code>+</code> → <code>%2B</code></li>
+            <li><code>*</code> → <code>%2A</code></li>
+            <li><code>/</code> → <code>%2F</code></li>
+        </ul>
+        Ejemplo: <code>4D6%2BD12</code>, <code>%282D6%2B3%29*2</code>
+    </div>
+
+    <h2 id="parametros">Parámetros</h2>
+    <table>
+        <tr><th>Parámetro</th><th>Obligatorio</th><th>Default</th><th>Valores</th><th>Descripción</th></tr>
+        <tr>
+            <td><code>q</code></td>
+            <td><span class="badge badge-red">Sí</span></td>
+            <td>—</td>
+            <td>Expresión de dados</td>
+            <td>La expresión de dados a lanzar (ej: <code>D6</code>, <code>4D6+D12</code>)</td>
+        </tr>
+        <tr>
+            <td><code>source</code></td>
+            <td><span class="badge badge-green">No</span></td>
+            <td><code>crypto-pure</code></td>
+            <td><code>crypto-pure</code>, <code>crypto-xoshiro-ng</code></td>
+            <td>Fuente de aleatoriedad</td>
+        </tr>
+        <tr>
+            <td><code>format</code></td>
+            <td><span class="badge badge-green">No</span></td>
+            <td><code>json</code></td>
+            <td><code>json</code>, <code>text</code>, <code>html</code>, <code>raw</code></td>
+            <td>Formato de respuesta</td>
+        </tr>
+    </table>
+
+    <h2 id="formatos">Formatos de Respuesta</h2>
+
+    <h3>JSON (default)</h3>
+    <p>Respuesta estructurada con todos los detalles de la tirada. Para uso programático.</p>
+    <pre><code>GET /roll?q=2D8+1D20-4
+
+{
+  "ok": true,
+  "expression": "2D8+1D20-4",
+  "normalized": "2D8+1D20-4",
+  "source": "crypto-pure",
+  "groups": [
+    { "dice": "D8", "count": 2, "rolls": [8, 8], "subtotal": 16 },
+    { "dice": "D20", "count": 1, "rolls": [20], "subtotal": 20 }
+  ],
+  "modifier": -4,
+  "detail": "[8+8]+[20]-4",
+  "total": 32,
+  "timestamp": "2026-07-04T12:00:00.000Z"
+}</code></pre>
+
+    <h3>Texto</h3>
+    <p>Texto plano legible para humanos. Para terminal / curl.</p>
+    <pre><code>GET /roll?q=2D8+1D20-4&format=text
+<span class="highlight">[8+8]+[20]-4 = 32</span></code></pre>
+
+    <h3>HTML</h3>
+    <p>Página HTML estilizada. Para usar directamente en el navegador o incrustar en iframes.</p>
+    <pre><code>GET /roll?q=2D8+1D20-4&format=html
+<span class="highlight">&lt;!-- Devuelve una página HTML completa con tema oscuro --&gt;</span></code></pre>
+    <p>Al abrir la URL directamente en un navegador se muestra una tarjeta con el resultado, los dados individuales y el total.</p>
+
+    <h3>Raw</h3>
+    <p>Solo el número. Ideal para scripts que solo necesitan el valor del resultado.</p>
+    <pre><code>GET /roll?q=2D8+1D20-4&format=raw
+<span class="highlight">32</span></code></pre>
+
+    <h2 id="fuentes">Fuentes de Aleatoriedad</h2>
+
+    <h3>crypto-pure (default)</h3>
+    <p>
+        Usa <code>crypto.randomInt()</code> de Node.js, que llama al CSPRNG del
+        kernel (<code>getrandom()</code> → <code>/dev/urandom</code>).
+        Esto proporciona <strong>entropía real de hardware</strong> recolectada de:
+    </p>
+    <ul>
+        <li>Jitter del ciclo de la CPU</li>
+        <li>Variaciones de temporización de I/O de disco</li>
+        <li>Temporización de interrupciones de red</li>
+        <li>Generadores de números aleatorios hardware (si están disponibles)</li>
+    </ul>
+    <p>
+        Cada llamada es <strong>sin estado</strong> e <strong>independiente</strong>.
+        Sin semilla, sin estado, sin secuencia — cada número es entropía fresca.
+        Usa rejection sampling internamente para eliminar el sesgo de módulo.
+    </p>
+
+    <h3>crypto-xoshiro-ng</h3>
+    <p>
+        Fuente híbrida que combina la velocidad de un PRNG con la seguridad de la
+        entropía criptográfica:
+    </p>
+    <ol>
+        <li><strong>Semilla:</strong> 128 bits de entropía real vía <code>crypto.randomBytes(16)</code></li>
+        <li><strong>Generación:</strong> Algoritmo Xoshiro128++ (~200M números/segundo)</li>
+        <li><strong>Inyección de ruido:</strong> Cada salida se combina con XOR contra un timestamp de microsegundos</li>
+        <li><strong>Auto-reseed:</strong> Nueva semilla de 128 bits cada hora (configurable)</li>
+    </ol>
+    <p>
+        Ideal para escenarios de alto rendimiento donde se necesita velocidad y
+        comportamiento no determinista.
+    </p>
+
+    <h2 id="casos-de-uso">Casos de Uso</h2>
+    <p>
+        Al ser una API REST estándar, EntropyDice puede ser llamada desde cualquier
+        lenguaje o plataforma que soporte peticiones HTTP. A continuación ejemplos
+        de integración comunes.
+    </p>
+
+    <h3 id="desde-navegador">Desde el Navegador (JavaScript)</h3>
+    <pre><code>const respuesta = await fetch('https://entropydice.onrender.com/roll?q=4D6+D12');
+const datos = await respuesta.json();
+console.log(`Total: ${datos.total}`);   // → Total: 22
+console.log(`Detalle: ${datos.detail}`); // → Detalle: [4+2+6+1]+[9]</code></pre>
+
+    <h3 id="desde-curl">Desde curl (terminal)</h3>
+    <pre><code># Respuesta JSON
+curl "https://entropydice.onrender.com/roll?q=4D6%2BD12"
+
+# Respuesta texto (legible)
+curl "https://entropydice.onrender.com/roll?q=4D6%2BD12&format=text"
+# → [4+2+6+1]+[9] = 22
+
+# Respuesta raw (solo el número)
+curl "https://entropydice.onrender.com/roll?q=4D6&format=raw"
+# → 13
+
+# Usar en un script de shell:
+RESULTADO=$(curl -s "https://entropydice.onrender.com/roll?q=D20&format=raw")
+echo "Has sacado: $RESULTADO"</code></pre>
+
+    <h3 id="desde-python">Desde Python</h3>
+    <pre><code>import requests
+
+# Lanzar 4d6 + d12
+r = requests.get("https://entropydice.onrender.com/roll", params={
+    "q": "4D6+D12"
+})
+datos = r.json()
+print(f"Detalle: {datos['detail']}")
+print(f"Total:   {datos['total']}")
+
+# Con modificador y fuente personalizada
+r = requests.get("https://entropydice.onrender.com/roll", params={
+    "q": "2D8+1D20-4",
+    "source": "crypto-xoshiro-ng",
+    "format": "raw"
+})
+print(f"Resultado: {r.text}")  # → 32</code></pre>
+
+    <h3 id="desde-android">Desde Android (Kotlin)</h3>
+    <pre><code>// Usando OkHttp
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+
+val client = OkHttpClient()
+
+val request = Request.Builder()
+    .url("https://entropydice.onrender.com/roll?q=4D6")
+    .build()
+
+client.newCall(request).execute().use { response ->
+    val json = JSONObject(response.body!!.string())
+    val total = json.getInt("total")
+    val detail = json.getString("detail")
+    textView.text = "🎲 $detail = $total"
+}
+
+// Usando Retrofit
+interface DiceApi {
+    @GET("roll")
+    suspend fun lanzarDados(
+        @Query("q") expression: String,
+        @Query("format") format: String = "json"
+    ): ResponseBody
+}</code></pre>
+
+    <h3 id="desde-telegram">Desde Telegram Bot (Python)</h3>
+    <pre><code>import requests
+from telegram import Update
+from telegram.ext import Application, CommandHandler
+
+API_URL = "https://entropydice.onrender.com/roll"
+
+async def comando_roll(update: Update, context):
+    expression = context.args[0] if context.args else "D20"
+
+    r = requests.get(API_URL, params={
+        "q": expression,
+        "format": "text"
+    })
+
+    await update.message.reply_text(
+        f"🎲 *{expression}*\n`{r.text}`",
+        parse_mode="Markdown"
+    )
+
+app = Application.builder().token("TU_TOKEN").build()
+app.add_handler(CommandHandler("roll", comando_roll))
+app.run_polling()</code></pre>
+
+    <h3 id="desde-discord">Desde Discord Bot (discord.js)</h3>
+    <pre><code>const { Client, GatewayIntentBits } = require('discord.js');
+
+client.on('messageCreate', async msg => {
+    if (!msg.content.startsWith('!roll')) return;
+
+    const args = msg.content.slice(6).trim();
+    const expr = args || 'D20';
+
+    const res = await fetch(
+        `https://entropydice.onrender.com/roll?q=${encodeURIComponent(expr)}&format=json`
+    );
+    const data = await res.json();
+
+    const embed = {
+        title: '🎲 Tirada de Dados',
+        description: `${data.detail} = **${data.total}**`,
+        color: 0xe94560,
+        footer: { text: `fuente: ${data.source}` }
+    };
+    msg.channel.send({ embeds: [embed] });
+});</code></pre>
+
+    <h2 id="errores">Manejo de Errores</h2>
+    <p>Los errores devuelven una respuesta JSON con un campo <code>error</code> y el código de estado HTTP apropiado.</p>
+
+    <table>
+        <tr><th>Estado</th><th>Situación</th><th>Ejemplo</th></tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>Falta o es inválido el parámetro <code>q</code></td>
+            <td><code>{"ok":false,"error":"Falta el parámetro \"q\"..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>Caras de dado no válidas</td>
+            <td><code>{"ok":false,"error":"Caras no válidas: D7..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>Sintaxis de expresión inválida</td>
+            <td><code>{"ok":false,"error":"Carácter inesperado: 'X'"}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>División por cero</td>
+            <td><code>{"ok":false,"error":"División por cero"}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">400</span></td>
+            <td>Nombre de fuente inválido</td>
+            <td><code>{"ok":false,"error":"Fuente no válida: 'foo'..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">429</span></td>
+            <td>Límite de peticiones excedido (ráfaga o diario)</td>
+            <td><code>{"ok":false,"error":"Demasiadas peticiones..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">403</span></td>
+            <td>IP bloqueada permanentemente</td>
+            <td><code>{"ok":false,"error":"IP bloqueada permanentemente..."}</code></td>
+        </tr>
+        <tr>
+            <td><span class="badge badge-red">500</span></td>
+            <td>Error interno del servidor</td>
+            <td><code>{"ok":false,"error":"..."}</code></td>
+        </tr>
+    </table>
+
+    <h2 id="limites">Límites de Peticiones</h2>
+    <p>
+        El endpoint <code>/roll</code> está protegido por un sistema de rate
+        limiting en dos capas para garantizar un uso justo y prevenir abusos.
+    </p>
+    <h3>Límite de Ráfaga</h3>
+    <p>
+        Máximo <strong>120 peticiones por minuto</strong> por dirección IP.
+        Superarlo devuelve una respuesta <code>429 Too Many Requests</code>.
+        Las cabeceras estándar <code>X-RateLimit-*</code> se incluyen en cada
+        respuesta.
+    </p>
+    <h3>Límite Diario</h3>
+    <p>
+        Máximo <strong>7200 peticiones por día</strong> por dirección IP.
+        Cada respuesta incluye las cabeceras <code>X-RateLimit-Daily-Limit</code>
+        y <code>X-RateLimit-Daily-Remaining</code>.
+    </p>
+    <h3>Sistema de Baneo</h3>
+    <p>
+        Cada vez que una IP excede el límite diario, acumula un
+        <strong>strike</strong>. Tras <strong>3 strikes consecutivos</strong>,
+        la IP recibe un <strong>baneo permanente</strong> y obtiene
+        <code>403 Forbidden</code> en todas las peticiones futuras.
+    </p>
+    <p>
+        Los strikes expiran tras 24 horas de buen comportamiento (sin
+        violaciones del límite diario). Los datos se persisten en un archivo
+        JSON y sobreviven a reinicios del servidor.
+    </p>
+
+    <h2 id="variables">Variables de Entorno</h2>
+    <table>
+        <tr><th>Variable</th><th>Default</th><th>Descripción</th></tr>
+        <tr><td><code>PORT</code></td><td><code>3000</code></td><td>Puerto del servidor HTTP</td></tr>
+        <tr><td><code>DEFAULT_SOURCE</code></td><td><code>crypto-pure</code></td><td>Fuente de aleatoriedad por defecto cuando se omite el parámetro <code>source</code></td></tr>
+        <tr><td><code>RESEED_INTERVAL_MS</code></td><td><code>3600000</code></td><td>Intervalo de reseed para <code>crypto-xoshiro-ng</code> en milisegundos (1 hora)</td></tr>
+        <tr><td><code>RATE_LIMIT_WINDOW_MS</code></td><td><code>60000</code></td><td>Ventana de tiempo del límite de ráfaga en ms (1 minuto)</td></tr>
+        <tr><td><code>RATE_LIMIT_MAX</code></td><td><code>120</code></td><td>Máximo de peticiones por IP dentro de la ventana de ráfaga</td></tr>
+        <tr><td><code>RATE_LIMIT_DAILY</code></td><td><code>7200</code></td><td>Máximo de peticiones por IP y día</td></tr>
+        <tr><td><code>BAN_MAX_STRIKES</code></td><td><code>3</code></td><td>Violaciones diarias consecutivas antes del baneo permanente</td></tr>
+        <tr><td><code>BANNED_IPS</code></td><td><code></code></td><td>Lista de IPs baneadas manualmente (separadas por comas)</td></tr>
+    </table>
+
+    <h2 id="despliegue">Despliegue en Render</h2>
+    <ol>
+        <li>Crea un <strong>Web Service</strong> en <a href="https://render.com" target="_blank">render.com</a></li>
+        <li>Conecta tu repositorio de GitHub/GitLab</li>
+        <li>Configura:
+            <ul>
+                <li><strong>Build Command:</strong> <code>npm install</code></li>
+                <li><strong>Start Command:</strong> <code>node server.js</code></li>
+                <li><strong>Plan:</strong> Free</li>
+            </ul>
+        </li>
+        <li>Añade variables de entorno opcionales (ver arriba)</li>
+        <li>Despliega. Tu API estará disponible en <code>https://tu-app.onrender.com</code></li>
+    </ol>
+    <p>El plan gratuito se duerme tras 15 minutos de inactividad. La primera petición tras el sueño tarda ~5-10 segundos en arrancar (cold start).</p>
+
+    <h2 id="futuras-funcionalidades">Futuras Funcionalidades</h2>
+    <p>Funcionalidades bajo consideración para versiones futuras:</p>
+    <ul>
+        <li><code>max(a, b)</code> y <code>min(a, b)</code> — mayor/menor de dos expresiones</li>
+        <li>Operador <code>d</code> (descartar) — ej: <code>4D6d1</code> para descartar el dado más bajo</li>
+        <li>Operador <code>k</code> (conservar) — ej: <code>4D6k3</code> para conservar los 3 dados más altos</li>
+        <li>Notación de ventaja/desventaja: <code>ADV(D20)</code>, <code>DIS(D20)</code></li>
+    </ul>
+
+    <h4>Parámetro <code>name</code></h4>
+    <p>
+        En partidas de rol juegan varios personajes/jugadores y muchos NPCs.
+        Un parámetro <code>name</code> (o <code>user</code>) permitiría indicar
+        un identificador de jugador o personaje en cada tirada — ej.
+        <code>Player-1</code>, <code>Esqueleto-3</code>, <code>murciélago</code>.
+        La API devolvería este mismo campo en la respuesta, facilitando a
+        programas que hacen muchas tiradas discernir a quién pertenece cada
+        resultado.
+    </p>
+
+    <h4>Dados de colores / grupos paralelos</h4>
+    <p>
+        Hay juegos que lanzan dados de diferentes colores donde cada grupo de
+        color forma operaciones independientes y no una única expresión conjunta.
+        Por ejemplo, lanzar 2 dados verdes y 3 dados blancos a la vez: cada grupo
+        de color se evalúa por separado. Esta funcionalidad requiere un diseño
+        cuidadoso para expresar los grupos de color en la cadena de consulta
+        manteniendo una sintaxis intuitiva.
+    </p>
+
+    <h4>Modo de solo dados (sin cálculo)</h4>
+    <p>
+        Un modo de respuesta que muestre únicamente los resultados individuales
+        de los dados sin realizar ninguna operación aritmética. Por ejemplo,
+        <code>3D6</code> devolvería <code>[6][6][6]</code> y
+        <code>2D8+4</code> devolvería <code>[8][8][4]</code> (se ignoran los
+        operadores y modificadores). Es útil para depuración, verificación manual
+        o cuando el cliente quiere aplicar su propia lógica matemática. Si la
+        expresión no contiene dados — ej. <code>2+4+6</code> — los valores se
+        devuelven como resultados literales <code>[2][4][6]</code>.
+
+    <h2 id="acerca-de">Acerca de</h2>
+
+    <h3>EntropyDice v0.8.5</h3>
+
+    <p>
+        EntropyDice es una API REST que genera números aleatorios criptográficamente
+        seguros para dados de juegos de rol utilizando el CSPRNG del kernel. Está
+        diseñada para ser simple, ligera y utilizable desde cualquier plataforma que
+        soporte peticiones HTTP.
+    </p>
+
+    <p>
+        Esta aplicación ha sido desarrollada por <strong>carlymx</strong>.
+    </p>
+
+    <p>
+        GitHub: <a href="https://github.com/carlymx" target="_blank">https://github.com/carlymx</a>
+    </p>
+
+    <p>
+        Repositorio del proyecto: <a href="https://github.com/carlymx/entropydice" target="_blank">https://github.com/carlymx/entropydice</a>
+    </p>
+
+    <h3>Propiedad intelectual</h3>
+
+    <p>
+        El código fuente de esta aplicación se distribuye bajo los términos de la
+        <strong>GNU General Public License v3.0</strong>.
+    </p>
+
+    <p>
+        <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">https://www.gnu.org/licenses/gpl-3.0.html</a>
+    </p>
+
+    <h3>Aviso legal</h3>
+
+    <p>
+        ESTE SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA
+        O IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A GARANTÍAS DE COMERCIALIZACIÓN,
+        IDONEIDAD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS
+        AUTORES O TITULARES DEL COPYRIGHT SERÁN RESPONSABLES POR CUALQUIER RECLAMO,
+        DAÑO U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN CONTRACTUAL, EXTRACONTRACTUAL
+        O DE OTRO TIPO, QUE SURJA DE O EN CONEXIÓN CON EL SOFTWARE O EL USO U OTRO
+        TIPO DE ACCIONES EN EL SOFTWARE.
+    </p>
+
+    <p>
+        EntropyDice es un proyecto sin ánimo de lucro, creado con fines educativos y
+        de entretenimiento. No se cobra por su uso ni se recaudan datos personales de
+        los usuarios.
+    </p>
+
+    <br>
+    <hr>
+    <p style="color:#555;font-size:0.85em;text-align:center;margin-top:24px;">
+        EntropyDice v0.8.5 &mdash; 2026-07-04<br>
+        Hecho por <a href="https://github.com/carlymx" target="_blank" style="color:#7ec8e3;">carlymx</a>
+        &middot; <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" style="color:#7ec8e3;">GPLv3</a>
+    </p>
+</main>
+
+<script>
+    document.querySelectorAll('.sidebar nav a').forEach(link => {
+        link.addEventListener('click', function() {
+            document.querySelectorAll('.sidebar nav a').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    if (location.hash) {
+        const active = document.querySelector(`.sidebar nav a[href="${location.hash}"]`);
+        if (active) active.classList.add('active');
+    }
+    window.addEventListener('hashchange', () => {
+        document.querySelectorAll('.sidebar nav a').forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar nav a[href="${location.hash}"]`);
+        if (active) active.classList.add('active');
+    });
+</script>
+</body>
+</html>

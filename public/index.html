@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EntropyDice — API Tester</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        background: #1a1a2e;
+        color: #e0e0e0;
+        display: flex; justify-content: center; align-items: center;
+        min-height: 100vh; padding: 20px;
+    }
+    .app {
+        background: #16213e;
+        border: 2px solid #e94560;
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 680px; width: 100%;
+    }
+    h1 {
+        text-align: center;
+        font-size: 1.8em;
+        margin-bottom: 4px;
+        color: #e94560;
+    }
+    .version {
+        color: #555;
+        font-size: 0.65em;
+        text-align: center;
+        margin-bottom: 4px;
+    }
+    .subtitle {
+        text-align: center;
+        color: #888;
+        font-size: 0.85em;
+        margin-bottom: 24px;
+    }
+    .examples {
+        color: #666;
+        font-size: 0.8em;
+        margin-bottom: 8px;
+        line-height: 1.6;
+    }
+    .examples code {
+        background: #0f3460;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #7ec8e3;
+        font-size: 0.95em;
+    }
+    .input-row {
+        display: flex; gap: 8px; margin-bottom: 12px;
+    }
+    .input-wrapper {
+        flex: 1; position: relative;
+    }
+    #expression {
+        width: 100%;
+        padding: 12px 40px 12px 16px;
+        font-size: 1.2em;
+        background: #0f3460;
+        border: 1px solid #533483;
+        border-radius: 8px;
+        color: #e0e0e0;
+        font-family: 'Courier New', monospace;
+    }
+    #expression:focus { outline: none; border-color: #e94560; }
+    #clear-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px; height: 28px;
+        display: flex; align-items: center; justify-content: center;
+        background: transparent;
+        border: none;
+        color: #888;
+        cursor: pointer;
+        font-size: 1.1em;
+        border-radius: 50%;
+        transition: background 0.2s, color 0.2s;
+    }
+    #clear-btn:hover {
+        background: #533483;
+        color: #e0e0e0;
+    }
+    #clear-btn.hidden { display: none; }
+    #roll-btn {
+        padding: 12px 28px;
+        font-size: 1.1em;
+        background: #e94560;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.2s;
+    }
+    #roll-btn:hover { background: #c73b52; }
+    #roll-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .options {
+        display: flex; gap: 16px; align-items: center;
+        margin-bottom: 20px; flex-wrap: wrap;
+        justify-content: center;
+    }
+    .options label {
+        font-size: 0.85em; color: #aaa;
+        display: flex; align-items: center; gap: 6px;
+    }
+    select, #api-url {
+        padding: 6px 10px;
+        background: #0f3460;
+        border: 1px solid #533483;
+        border-radius: 6px;
+        color: #e0e0e0;
+        font-size: 0.85em;
+    }
+    #api-url { width: 100%; min-width: 400px; font-size: 0.8em; }
+    .shortcuts {
+        display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap;
+        justify-content: center;
+    }
+    .shortcuts button {
+        padding: 6px 14px;
+        background: #533483;
+        color: #e0e0e0;
+        border: none; border-radius: 6px;
+        cursor: pointer; font-size: 0.85em;
+        transition: background 0.2s;
+    }
+    .shortcuts button:hover { background: #6a46a8; }
+    .results {
+        background: #0f3460;
+        border-radius: 12px; padding: 20px;
+        min-height: 60px;
+    }
+    .result-card {
+        border-bottom: 1px solid #1a1a4e;
+        padding: 12px 0;
+    }
+    .result-card:last-child { border-bottom: none; }
+    .result-expr { color: #a0a0a0; font-size: 0.85em; }
+    .result-detail { font-size: 1.1em; margin: 4px 0; }
+    .result-total { font-size: 1.8em; color: #e94560; font-weight: bold; }
+    .die { color: #f5c542; font-weight: bold; }
+    .dice-group { color: #7ec8e3; }
+    .result-source { font-size: 0.7em; color: #555; margin-top: 4px; }
+    .result-time { font-size: 0.65em; color: #444; }
+    .error { color: #ff6b6b; padding: 8px; }
+    .loading { color: #f5c542; }
+    .empty { color: #555; text-align: center; font-style: italic; }
+    .html-result {
+        width: 100%; height: 180px; border: none;
+        border-radius: 8px; background: #1a1a2e;
+    }
+    .lang-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    .lang-toggle button {
+        padding: 5px 10px;
+        background: #533483;
+        color: #e0e0e0;
+        border: 1px solid #6a46a8;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.75em;
+        font-weight: bold;
+        transition: background 0.2s, color 0.2s;
+    }
+    .lang-toggle button:hover {
+        background: #6a46a8;
+        color: #fff;
+    }
+    .lang-toggle .help-link {
+        padding: 5px 10px;
+        background: #533483;
+        color: #e0e0e0;
+        border: 1px solid #6a46a8;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.75em;
+        font-weight: bold;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+    }
+    .lang-toggle .help-link:hover {
+        background: #6a46a8;
+        color: #fff;
+    }
+    .credit {
+        text-align: center;
+        font-size: 0.7em;
+        color: #555;
+        margin-top: 20px;
+    }
+    .credit a {
+        color: #888;
+        text-decoration: none;
+    }
+    .credit a:hover {
+        color: #e94560;
+    }
+</style>
+</head>
+<body>
+<div class="app">
+    <div class="lang-toggle">
+        <button onclick="toggleLang()" id="lang-btn">EN</button>
+        <a class="help-link" id="help-link" href="/help/en.html" target="_blank" title="Help">?</a>
+    </div>
+    <h1>EntropyDice</h1>
+    <p class="version">v0.8.5</p>
+    <p class="subtitle" data-i18n="subtitle">Real Entropy Dice API Tester</p>
+
+    <p class="examples">
+        <span data-i18n="examples_label">Examples:</span> <code>D6</code> <code>4D6</code> <code>4D6+D12</code> <code>2D8+1D20-4</code> <code>(2D6+3)*2</code> <code>D6*2</code> <code>D20/2</code>
+    </p>
+
+    <div class="input-row">
+        <div class="input-wrapper">
+            <input type="text" id="expression" data-i18n-placeholder="placeholder" placeholder="e.g.: 4D6+D12" value="2D8+1D20-4" autofocus>
+            <button id="clear-btn" class="hidden" onclick="clearInput()" data-i18n-title="clear_title" title="Clear">✕</button>
+        </div>
+        <button id="roll-btn" onclick="doRoll()" data-i18n="roll_btn">Roll</button>
+    </div>
+
+    <div class="shortcuts">
+        <button onclick="quickRoll('D4')">D4</button>
+        <button onclick="quickRoll('D6')">D6</button>
+        <button onclick="quickRoll('D8')">D8</button>
+        <button onclick="quickRoll('D10')">D10</button>
+        <button onclick="quickRoll('D12')">D12</button>
+        <button onclick="quickRoll('D20')">D20</button>
+        <button onclick="quickRoll('D100')">D100</button>
+    </div>
+
+    <div class="options">
+        <label><span data-i18n="source_label">Source:</span>
+            <select id="source">
+                <option value="crypto-pure">Crypto Pure</option>
+                <option value="crypto-xoshiro-ng">Crypto Xoshiro NG</option>
+            </select>
+        </label>
+        <label><span data-i18n="format_label">Format:</span>
+            <select id="format">
+                <option value="json">JSON</option>
+                <option value="text">Texto</option>
+                <option value="html">HTML</option>
+                <option value="raw">Solo resultado</option>
+            </select>
+        </label>
+        <label><span data-i18n="api_label">API:</span> <input type="text" id="api-url" value="/roll" readonly></label>
+    </div>
+
+    <div class="results" id="results">
+        <p class="empty" data-i18n="empty_state">Roll your dice to start</p>
+    </div>
+    <div class="credit">
+        <a href="https://github.com/carlymx" target="_blank">carlymx</a> &mdash;
+        <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPL3</a> &mdash; 2026
+    </div>
+</div>
+
+<script>
+const translations = {
+    es: {
+        subtitle: 'Probador de la API de dados con entropía real',
+        examples_label: 'Ejemplos:',
+        placeholder: 'ej: 4D6+D12',
+        clear_title: 'Borrar',
+        roll_btn: 'Lanzar',
+        source_label: 'Fuente:',
+        format_label: 'Formato:',
+        api_label: 'API:',
+        empty_state: 'Lanza tus dados para empezar',
+        loading: 'Tirando dados...',
+        error_prefix: 'Error:',
+        result_source: 'fuente:',
+        result_html: 'respuesta: HTML renderizado',
+        result_text: 'respuesta: texto plano',
+        roll_loading: '...',
+        format_json: 'JSON',
+        format_text: 'Texto',
+        format_html: 'HTML',
+        format_raw: 'Solo resultado'
+    },
+    en: {
+        subtitle: 'Real Entropy Dice API Tester',
+        examples_label: 'Examples:',
+        placeholder: 'e.g.: 4D6+D12',
+        clear_title: 'Clear',
+        roll_btn: 'Roll',
+        source_label: 'Source:',
+        format_label: 'Format:',
+        api_label: 'API:',
+        empty_state: 'Roll your dice to start',
+        loading: 'Rolling dice...',
+        error_prefix: 'Error:',
+        result_source: 'source:',
+        result_html: 'response: rendered HTML',
+        result_text: 'response: plain text',
+        roll_loading: '...',
+        format_json: 'JSON',
+        format_text: 'Text',
+        format_html: 'HTML',
+        format_raw: 'Raw result'
+    }
+};
+
+let currentLang = 'en';
+
+function detectLang() {
+    const stored = localStorage.getItem('lang');
+    if (stored === 'en' || stored === 'es') return stored;
+    const nav = navigator.language || '';
+    return nav.toLowerCase().startsWith('es') ? 'es' : 'en';
+}
+
+function setLang(lang) {
+    currentLang = lang;
+    const t = translations[lang];
+
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = t[el.dataset.i18n] || el.textContent;
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        el.placeholder = t[el.dataset.i18nPlaceholder] || el.placeholder;
+    });
+
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        el.title = t[el.dataset.i18nTitle] || el.title;
+    });
+
+    const formatSel = document.getElementById('format');
+    const options = formatSel.options;
+    options[0].textContent = lang === 'es' ? 'JSON' : 'JSON';
+    options[1].textContent = t.format_text;
+    options[2].textContent = t.format_html;
+    options[3].textContent = t.format_raw;
+
+    document.getElementById('lang-btn').textContent = lang === 'es' ? 'EN' : 'ES';
+
+    const helpLink = document.getElementById('help-link');
+    helpLink.href = lang === 'es' ? '/help/es.html' : '/help/en.html';
+    helpLink.title = lang === 'es' ? 'Ayuda' : 'Help';
+
+    localStorage.setItem('lang', lang);
+
+    renderResults();
+}
+
+function toggleLang() {
+    setLang(currentLang === 'es' ? 'en' : 'es');
+}
+
+const resultsEl = document.getElementById('results');
+const exprInput = document.getElementById('expression');
+const clearBtn = document.getElementById('clear-btn');
+const history = [];
+
+function i18n(key) {
+    return translations[currentLang][key] || key;
+}
+
+function updateClearButton() {
+    clearBtn.classList.toggle('hidden', exprInput.value === '');
+}
+exprInput.addEventListener('input', updateClearButton);
+updateClearButton();
+
+function clearInput() {
+    exprInput.value = '';
+    updateClearButton();
+    exprInput.focus();
+}
+
+function quickRoll(expr) {
+    exprInput.value = expr;
+    updateClearButton();
+    doRoll();
+}
+
+async function doRoll() {
+    const expr = exprInput.value.trim();
+    const source = document.getElementById('source').value;
+    const format = document.getElementById('format').value;
+
+    if (!expr) return;
+
+    const btn = document.getElementById('roll-btn');
+    btn.disabled = true;
+    btn.textContent = i18n('roll_loading');
+
+    resultsEl.innerHTML = `<p class="loading">${i18n('loading')}</p>`;
+
+    const url = `/roll?q=${encodeURIComponent(expr)}&source=${source}&format=${format}`;
+    document.getElementById('api-url').value = url;
+
+    try {
+        const response = await fetch(url);
+        const contentType = response.headers.get('content-type') || '';
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || `HTTP ${response.status}`);
+        }
+
+        if (contentType.includes('text/html')) {
+            const htmlText = await response.text();
+            history.unshift({
+                expression: expr,
+                source: source,
+                timestamp: new Date().toISOString(),
+                isHtml: true,
+                htmlContent: htmlText,
+            });
+        } else if (contentType.includes('application/json')) {
+            const data = await response.json();
+            if (!data.ok) throw new Error(data.error);
+            history.unshift(data);
+        } else {
+            const text = await response.text();
+            history.unshift({
+                expression: expr,
+                detail: text,
+                total: text.split('=').pop().trim(),
+                source: source,
+                timestamp: new Date().toISOString(),
+                isText: true,
+            });
+        }
+
+        if (history.length > 10) history.pop();
+        renderResults();
+    } catch (e) {
+        resultsEl.innerHTML = `<p class="error">${i18n('error_prefix')} ${e.message}</p>`;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = i18n('roll_btn');
+    }
+}
+
+function renderResults() {
+    if (history.length === 0) {
+        resultsEl.innerHTML = `<p class="empty">${i18n('empty_state')}</p>`;
+        return;
+    }
+
+    resultsEl.innerHTML = history.map(r => {
+        if (r.isHtml) {
+            const id = 'html-' + Math.random().toString(36).slice(2);
+            setTimeout(() => {
+                const ifr = document.getElementById(id);
+                if (ifr) ifr.srcdoc = r.htmlContent;
+            }, 10);
+            return `<div class="result-card">
+                <div class="result-expr">${esc(r.expression)} — ${esc(r.source)}</div>
+                <iframe id="${id}" class="html-result" sandbox="allow-same-origin"></iframe>
+                <div class="result-source">${i18n('result_html')}</div>
+            </div>`;
+        }
+
+        if (r.isText) {
+            return `<div class="result-card">
+                <div class="result-expr">${esc(r.expression)} — ${esc(r.source)}</div>
+                <div class="result-detail">${esc(r.detail)}</div>
+                <div class="result-source">${i18n('result_text')}</div>
+            </div>`;
+        }
+
+        const detailHtml = r.detail.replace(
+            /(\d+)(?=[^\]]*\])/g,
+            '<span class="die">$1</span>'
+        ).replace(
+            /\[([^\]]+)\]/g,
+            '<span class="dice-group">[$1]</span>'
+        );
+
+        return `<div class="result-card">
+            <div class="result-expr">${esc(r.expression)} → ${esc(r.normalized)}</div>
+            <div class="result-total">${r.total}</div>
+            <div class="result-detail">${detailHtml}</div>
+            <div class="result-source">${i18n('result_source')} ${esc(r.source)} · <span class="result-time">${new Date(r.timestamp).toLocaleTimeString(currentLang === 'es' ? 'es-ES' : 'en-US')}</span></div>
+        </div>`;
+    }).join('');
+}
+
+function esc(s) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return (s || '').replace(/[&<>"']/g, c => map[c]);
+}
+
+exprInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doRoll();
+});
+
+setLang(detectLang());
+</script>
+</body>
+</html>
