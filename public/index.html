@@ -110,6 +110,7 @@
         font-size: 0.85em; color: #aaa;
         display: flex; align-items: center; gap: 6px;
     }
+    .options label.api-label { flex: 1 1 100%; }
     select, #api-url {
         padding: 6px 10px;
         background: #0f3460;
@@ -118,7 +119,7 @@
         color: #e0e0e0;
         font-size: 0.85em;
     }
-    #api-url { width: 100%; min-width: 400px; font-size: 0.8em; }
+    #api-url { width: 100%; font-size: 0.8em; }
     .shortcuts {
         display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap;
         justify-content: center;
@@ -132,6 +133,10 @@
         transition: background 0.2s;
     }
     .shortcuts button:hover { background: #6a46a8; }
+    .shortcuts button.num { background: #1a6f8a; }
+    .shortcuts button.num:hover { background: #258dab; }
+    .shortcuts button.op { background: #c76b20; }
+    .shortcuts button.op:hover { background: #e07d2c; }
     .results {
         background: #0f3460;
         border-radius: 12px; padding: 20px;
@@ -215,7 +220,7 @@
         <a class="help-link" id="help-link" href="/help/en.html" target="_blank" title="Help">?</a>
     </div>
     <h1>EntropyDice</h1>
-    <p class="version">v0.8.5</p>
+    <p class="version">v0.8.7</p>
     <p class="subtitle" data-i18n="subtitle">Real Entropy Dice API Tester</p>
 
     <p class="examples">
@@ -239,6 +244,26 @@
         <button onclick="quickRoll('D20')">D20</button>
         <button onclick="quickRoll('D100')">D100</button>
     </div>
+    <div class="shortcuts numpad">
+        <button class="num" onclick="quickNum('1')">1</button>
+        <button class="num" onclick="quickNum('2')">2</button>
+        <button class="num" onclick="quickNum('3')">3</button>
+        <button class="num" onclick="quickNum('4')">4</button>
+        <button class="num" onclick="quickNum('5')">5</button>
+        <button class="num" onclick="quickNum('6')">6</button>
+        <button class="num" onclick="quickNum('7')">7</button>
+        <button class="num" onclick="quickNum('8')">8</button>
+        <button class="num" onclick="quickNum('9')">9</button>
+        <button class="num" onclick="quickNum('0')">0</button>
+    </div>
+    <div class="shortcuts oppad">
+        <button class="op" onclick="quickOp('+')">+</button>
+        <button class="op" onclick="quickOp('-')">-</button>
+        <button class="op" onclick="quickOp('*')">*</button>
+        <button class="op" onclick="quickOp('/')">/</button>
+        <button class="op" onclick="quickOp('(')">(</button>
+        <button class="op" onclick="quickOp(')')">)</button>
+    </div>
 
     <div class="options">
         <label><span data-i18n="source_label">Source:</span>
@@ -255,7 +280,7 @@
                 <option value="raw">Solo resultado</option>
             </select>
         </label>
-        <label><span data-i18n="api_label">API:</span> <input type="text" id="api-url" value="/roll" readonly></label>
+        <label class="api-label"><span data-i18n="api_label">API:</span> <input type="text" id="api-url" value="/roll" readonly></label>
     </div>
 
     <div class="results" id="results">
@@ -263,6 +288,7 @@
     </div>
     <div class="credit">
         <a href="https://github.com/carlymx" target="_blank">carlymx</a> &mdash;
+        <a href="https://github.com/carlymx/entropydice" target="_blank">GitHub</a> &mdash;
         <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPL3</a> &mdash; 2026
     </div>
 </div>
@@ -383,10 +409,50 @@ function clearInput() {
     exprInput.focus();
 }
 
-function quickRoll(expr) {
+function quickRoll(die) {
+    let expr = exprInput.value;
+    const dieSides = die.substring(1);
+
+    const lastDieMatch = expr.match(/(\d*)D(\d+)$/);
+
+    if (lastDieMatch) {
+        if (lastDieMatch[2] === dieSides) {
+            const count = lastDieMatch[1] ? parseInt(lastDieMatch[1], 10) : 1;
+            const prefix = expr.substring(0, lastDieMatch.index);
+            expr = prefix + (count + 1) + die;
+        } else {
+            expr += '+' + die;
+        }
+    } else if (expr === '' || expr.endsWith('(') || /[+\-*/]$/.test(expr)) {
+        expr += die;
+    } else if (/\d+$/.test(expr)) {
+        const numMatch = expr.match(/(\d+)$/);
+        const prefix = expr.substring(0, numMatch.index);
+        expr = prefix + numMatch[1] + die;
+    } else {
+        expr += '+' + die;
+    }
+
     exprInput.value = expr;
     updateClearButton();
-    doRoll();
+}
+
+function quickNum(n) {
+    exprInput.value += n;
+    updateClearButton();
+}
+
+function quickOp(op) {
+    let expr = exprInput.value;
+    if (op === '(' || op === ')') {
+        expr += op;
+    } else if (/[+\-*/]$/.test(expr)) {
+        expr = expr.substring(0, expr.length - 1) + op;
+    } else {
+        expr += op;
+    }
+    exprInput.value = expr;
+    updateClearButton();
 }
 
 async function doRoll() {

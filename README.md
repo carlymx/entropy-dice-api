@@ -17,7 +17,7 @@ compound expressions like `4D6+D12`, `(2D6+3)*2` and modifiers like `2D8+1D20-4`
 ```bash
 npm install
 npm start
-# → EntropyDice API v0.8.5 en http://localhost:3000
+# → EntropyDice API v0.8.7 at http://localhost:3000
 ```
 ## Usage
 
@@ -83,12 +83,59 @@ curl "http://localhost:3000/roll?q=D20&source=crypto-xoshiro-ng"
 | `html` | `text/html` | Styled HTML page |
 | `raw` | `text/plain` | `15` |
 
+### True randomness vs pseudo-randomness
+
+Most virtual dice are pseudo-random. EntropyDice is true randomness.
+Plain and simple.
+
+Traditional systems use mathematical formulas to generate numbers
+that look random, but aren't. Given the same starting point (the
+"seed"), they always produce the same results. If someone discovers
+that seed, they can predict every roll before it happens.
+
+EntropyDice works differently. It offers two modes:
+
+| Mode | Source | Type | Speed | Capacity |
+|------|--------|------|-------|----------|
+| **Pure entropy** | `crypto-pure` | Randomness gathered from electronic device noise | ~500K rolls/s | ~5k-50k simultaneous users |
+| **Ultra-fast hybrid** | `crypto-xoshiro-ng` | Near-true randomness with periodic renewal | ~180M rolls/s | ~1.8M-18M simultaneous users |
+
+**crypto-pure** — For when true randomness is the priority
+(its default state). Every roll is generated from imperceptible physical
+phenomena inside the server (electrical noise, vibrations, temperature).
+There is no starting number from which others can be deduced. Slower,
+but 500,000 rolls per second still handles thousands of players.
+
+**crypto-xoshiro-ng** — For when you need speed without sacrificing
+security. It works in three layers:
+
+1. **Seed renewed every hour** — Every 60 minutes (configurable) a fresh seed
+   is generated from true random system processes. No seed is ever reused.
+2. **High-speed engine** — A rigorously tested number engine running
+   directly from server memory, no bottlenecks, with number sequences
+   so long they surpass the age of the universe.
+3. **Mixed with the exact instant** — Each number is combined with
+   the precise timestamp it was requested, so even simultaneous rolls
+   produce completely different results.
+
+The result: a system that, while technically algorithm-generated, is
+so intricate — renewable true-random seed + high-speed engine + temporal
+fingerprint — that it far surpasses any traditional PRNG like Mersenne
+Twister.
+
+Need truly random numbers? Use `crypto-pure`.
+Need speed without worries? `crypto-xoshiro-ng` has you covered.
+
+For true randomness and a simple API that anyone can host on their own
+server without depending on third parties, EntropyDice is your best
+option. 💪
+
 ### Sources
 
 | Source | Description |
 |--------|-------------|
-| `crypto-pure` | Kernel CSPRNG — true entropy, stateless, unbiased |
-| `crypto-xoshiro-ng` | 128-bit crypto seed → Xoshiro128++ with automatic reseed every hour |
+| `crypto-pure` | True server entropy — seedless, stateless, unbiased. ~500K rolls/s |
+| `crypto-xoshiro-ng` | Hybrid: renewable seed + fast engine + temporal mix. ~180M rolls/s |
 
 ---
 
@@ -130,6 +177,18 @@ See the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.h
 ---
 
 ## Changelog
+
+### v0.8.7 — 2026-07-06
+- **Visual dice calculator**: number buttons (0-9) and operator buttons (+, -, *, /, (), )) in the frontend
+- **Accumulate mode**: die buttons build expressions instead of auto-rolling
+- **True randomness narrative**: new section in both READMEs with speed and capacity tables
+- **3-phase flow diagram**: ASCII pipeline added to `docs/RNG_REFERENCE.md`
+- **API field fix**: removed fixed min-width for mobile responsiveness
+- **Credits updated**: GitHub repo link added to frontend footer
+
+### v0.8.6 — 2026-07-05
+- **RNG Reference refactored**: documentation for `crypto-pure` and `crypto-xoshiro-ng` moved to `/docs/`
+- **Version bump**: 0.8.5 → 0.8.6
 
 ### v0.8.5 — 2026-07-04
 - **Bilingual frontend**: EN/ES toggle button on the API tester with full i18n,

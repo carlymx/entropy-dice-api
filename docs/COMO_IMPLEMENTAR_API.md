@@ -1,6 +1,6 @@
 # EntropyDice — Guía de Implementación de la API
 
-> **Versión:** v0.8.5 &nbsp;|&nbsp; **Licencia:** GPL-3.0-only &nbsp;|&nbsp; **Autor:** carlymx
+> **Versión:** v0.8.7 &nbsp;|&nbsp; **Licencia:** GPL-3.0-only &nbsp;|&nbsp; **Autor:** carlymx
 >
 > Referencia completa para desarrolladores humanos y agentes de IA que deseen integrar
 > la API REST de EntropyDice en scripts, programas, sitios web y bots.
@@ -100,7 +100,7 @@ GET /
 ```json
 {
   "service": "EntropyDice API",
-  "version": "v0.8.5",
+  "version": "v0.8.7",
   "endpoints": {
     "roll": {
       "method": "GET",
@@ -1541,7 +1541,7 @@ client.on('messageCreate', async (msg) => {
             .setTitle(result.expression)
             .setDescription(`${result.detail} = **${result.total}**`)
             .setColor(0xe94560)
-            .setFooter({ text: `fuente: ${result.source} | v0.8.5` })
+            .setFooter({ text: `fuente: ${result.source} | v0.8.7` })
             .setTimestamp();
 
         // Mostrar tiradas individuales como campos
@@ -2019,4 +2019,4 @@ Funcionalidades bajo consideración para versiones futuras (aún no disponibles)
 
 ---
 
-*Documentación para EntropyDice v0.8.5 — 2026-07-04 — carlymx — GPL-3.0-only*
+*Documentación para EntropyDice v0.8.7 — 2026-07-06 — carlymx — GPL-3.0-only*

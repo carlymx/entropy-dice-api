@@ -1,5 +1,30 @@
 # Changelog
 
+## [v0.8.7] — 2026-07-06
+
+### Añadido
+- Calculadora visual de dados: botones numéricos (0-9), operadores (+, -, *, /, (), )) y paréntesis en el frontend
+- Los botones de dados ahora acumulan expresiones en vez de lanzar automáticamente
+- Secciones narrativas "True randomness vs pseudo-randomness" en README.md y README_ES.md
+- Subsección "Flujo de 3 fases" con diagrama ASCII en docs/RNG_REFERENCE.md
+- Enlace al repositorio GitHub en el crédito del frontend
+
+### Cambiado
+- Versión `package.json` → v0.8.7
+- Fecha de todos los archivos de documentación actualizada a 2026-07-06
+- Ancho del campo API corregido para móvil (min-width fijo eliminado)
+- Tablas de fuentes en READMEs actualizadas con velocidades y descripciones mejoradas
+
+## [v0.8.6] — 2026-07-05
+
+### Añadido
+- Archivo `RNG_REFERENCE.md` refactorizado y movido a `/docs/`: documentación genérica de `crypto-pure` y `crypto-xoshiro-ng`
+- `.gitignore` actualizado para rastrear `RNG_REFERENCE.md` en el repositorio
+
+### Cambiado
+- Versión `package.json` → v0.8.6
+- Fecha de todos los archivos de documentación actualizada a 2026-07-05
+
 ## [v0.8.5] — 2026-07-04
 
 ### Añadido

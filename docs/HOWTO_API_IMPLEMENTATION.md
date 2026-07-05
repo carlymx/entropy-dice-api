@@ -1,6 +1,6 @@
 # EntropyDice — API Implementation Guide
 
-> **Version:** v0.8.5 &nbsp;|&nbsp; **License:** GPL-3.0-only &nbsp;|&nbsp; **Author:** carlymx
+> **Version:** v0.8.7 &nbsp;|&nbsp; **License:** GPL-3.0-only &nbsp;|&nbsp; **Author:** carlymx
 >
 > Complete reference for human developers and AI agents integrating the EntropyDice REST API
 > into scripts, programs, websites, and bots.
@@ -100,7 +100,7 @@ GET /
 ```json
 {
   "service": "EntropyDice API",
-  "version": "v0.8.5",
+  "version": "v0.8.7",
   "endpoints": {
     "roll": {
       "method": "GET",
@@ -1541,7 +1541,7 @@ client.on('messageCreate', async (msg) => {
             .setTitle(result.expression)
             .setDescription(`${result.detail} = **${result.total}**`)
             .setColor(0xe94560)
-            .setFooter({ text: `source: ${result.source} | v0.8.5` })
+            .setFooter({ text: `source: ${result.source} | v0.8.7` })
             .setTimestamp();
 
         // Show individual rolls as fields
@@ -2019,4 +2019,4 @@ Features under consideration for future versions (not yet available):
 
 ---
 
-*Documentation for EntropyDice v0.8.5 — 2026-07-04 — carlymx — GPL-3.0-only*
+*Documentation for EntropyDice v0.8.7 — 2026-07-06 — carlymx — GPL-3.0-only*
