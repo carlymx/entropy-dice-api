@@ -1,4 +1,6 @@
-# EntropyDice 🎲
+# EntropyDice - API 🎲
+
+![logo](./assets/EntropyDice_logo/EntropyDICE_logo.png)
 
 ![Captura de pantalla](./assets/captures/web001.png)
 
@@ -148,23 +150,6 @@ Consulta la documentación interactiva completa en:
 👉 **https://entropydice.onrender.com/help/es.html**  *(cuando esté desplegado)*
 
 O abre `public/help/es.html` localmente.
-
----
-
-## Despliegue (Render)
-
-1. Crea un **Web Service** en [render.com](https://render.com)
-2. Conecta tu repositorio
-3. Configura:
-   - **Build Command:** `npm install`
-   - **Start Command:** `node server.js`
-   - **Plan:** Free
-4. Variables de entorno opcionales:
-    - `RESEED_INTERVAL_MS=3600000`
-    - `DEFAULT_SOURCE=crypto-pure`
-    - `RATE_LIMIT_MAX=120`
-    - `RATE_LIMIT_DAILY=7200`
-    - `BANNED_IPS=1.2.3.4,5.6.7.8` (baneos manuales)
 
 ---
 

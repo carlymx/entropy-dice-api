@@ -1,6 +1,6 @@
-# EntropyDice 🎲
+# EntropyDice - API 🎲
 
-![Web screenshot](./assets/captures/web001.png)
+![logo](./assets/EntropyDice_logo/EntropyDICE_logo.png)
 
 **True random dice for role-playing games. Cryptographically secure.**
 
@@ -9,6 +9,8 @@ REST API that generates real random numbers using the kernel's CSPRNG
 compound expressions like `4D6+D12`, `(2D6+3)*2` and modifiers like `2D8+1D20-4`.
 
 > 📖 **Español:** [README_ES.md](README_ES.md)
+
+![Web screenshot](./assets/captures/web001.png)
 
 ---
 
@@ -146,23 +148,6 @@ See the complete interactive documentation at:
 👉 **https://entropydice.onrender.com/help/en.html**  *(when deployed)*
 
 Or open `public/help/en.html` locally.
-
----
-
-## Deployment (Render)
-
-1. Create a **Web Service** on [render.com](https://render.com)
-2. Connect your repository
-3. Set:
-   - **Build Command:** `npm install`
-   - **Start Command:** `node server.js`
-   - **Plan:** Free
-4. Optional env vars:
-    - `RESEED_INTERVAL_MS=3600000`
-    - `DEFAULT_SOURCE=crypto-pure`
-    - `RATE_LIMIT_MAX=120`
-    - `RATE_LIMIT_DAILY=7200`
-    - `BANNED_IPS=1.2.3.4,5.6.7.8` (manual bans)
 
 ---
 
