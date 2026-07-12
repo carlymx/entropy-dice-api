@@ -10,7 +10,7 @@ expresiones compuestas como `4D6+D12`, `(2D6+3)*2` y modificadores como `2D8+1D2
 
 > 📖 **English:** [README.md](README.md)
 
-![Captura de pantalla](./assets/captures/web001.png)
+![Captura de pantalla](./assets/captures/web003.png)
 
 El proyecto incluye, dentro de la carpeta /public/, una página web sencilla que demuestra el funcionamiento de la API. Sin embargo, su uso no es obligatorio: puede integrar la API en cualquiera de sus proyectos sin necesidad de incluir esta página de prueba.
 
