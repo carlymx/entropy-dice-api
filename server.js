@@ -197,6 +197,7 @@ const burstLimiter = rateLimit({
 });
 
 app.use(express.static('public'));
+app.use('/assets', express.static('assets'));
 
 app.get('/', (req, res) => {
     res.json({

@@ -26,6 +26,8 @@
         margin-bottom: 4px;
         color: #e94560;
     }
+    .logo-img { max-height: 96px; vertical-align: middle; }
+    .logo-fallback { display: none; }
     .version {
         color: #555;
         font-size: 0.65em;
@@ -220,7 +222,12 @@
         <button onclick="toggleLang()" id="lang-btn">EN</button>
         <a class="help-link" id="help-link" href="/help/en.html" target="_blank" title="Help">?</a>
     </div>
-    <h1>EntropyDice</h1>
+    <h1>
+        <img src="/assets/EntropyDice_logo/EntropyDICE_logo_yellow.png" alt="EntropyDice"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"
+             class="logo-img">
+        <span class="logo-fallback">EntropyDice</span>
+    </h1>
     <p class="version">v0.8.7</p>
     <p class="subtitle" data-i18n="subtitle">Real Entropy Dice API Tester</p>
 

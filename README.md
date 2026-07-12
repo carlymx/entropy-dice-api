@@ -1,6 +1,6 @@
 # EntropyDice - API 🎲
 
-![logo](./assets/EntropyDice_logo/EntropyDICE_logo.png)
+![logo](./assets/EntropyDice_logo/EntropyDICE_logo_yellow.png)
 
 **True random dice for role-playing games. Cryptographically secure.**
 
@@ -11,6 +11,8 @@ compound expressions like `4D6+D12`, `(2D6+3)*2` and modifiers like `2D8+1D20-4`
 > 📖 **Español:** [README_ES.md](README_ES.md)
 
 ![Web screenshot](./assets/captures/web001.png)
+
+The project includes, within the /public/ folder, a simple web page that demonstrates how the API works. However, its use is not mandatory: you can integrate the API into any of your projects without needing to include this test page.
 
 ---
 
