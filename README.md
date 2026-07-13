@@ -2,6 +2,8 @@
 
 ![logo](./assets/EntropyDice_logo/EntropyDICE_logo_yellow.png)
 
+> 🎲 **DEMO LIVE:** [https://entropy-dice-api.onrender.com](https://entropy-dice-api.onrender.com)
+
 **True random dice for role-playing games. Cryptographically secure.**
 
 REST API that generates real random numbers using the kernel's CSPRNG

@@ -2,6 +2,8 @@
 
 ![logo](./assets/EntropyDice_logo/EntropyDICE_logo_yellow.png)
 
+> 🎲 **DEMO LIVE:** [https://entropy-dice-api.onrender.com](https://entropy-dice-api.onrender.com)
+
 **Dados aleatorios reales para juegos de rol. Criptográficamente seguros.**
 
 API REST que genera números aleatorios reales usando el CSPRNG del kernel
